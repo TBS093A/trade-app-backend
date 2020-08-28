@@ -231,6 +231,10 @@ class Threads(ObjectAbstract):
 
     # Get One Thread
 
+    def __getObjectNormal(objectID):
+        object = Threads.objects.get(pk = objectID).toDict()
+        return HttpResponse(json.dumps(object))
+
     # Create Thread
 
     @classmethod
@@ -258,6 +262,12 @@ class Threads(ObjectAbstract):
         return HttpResponse(f"Add new Thread: {newObject.toDict()}")
 
     # Update Thread
+
+    def updateObject(request, objectDict, objectID):
+        objectOld = Threads.objects.get(pk = objectID)
+        objectOld.fromDict(objectDict)
+        objectOld.save()
+        return HttpResponse(f"{model.__name__}: {objectOld.toDict()} has been updated")
 
     # Delete Thread
 
