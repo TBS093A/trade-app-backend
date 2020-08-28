@@ -95,11 +95,19 @@ class ObjectAbstract(models.Model):
             return HttpResponse(self.getAllByParentID(parentID))
         return HttpResponse("No Permission")
 
+    # @classmethod
+    # def putObject(self, request, objectID, privilige):
+    #     if checkSession(request, privilige):
+    #         object = jsonLoad(request)
+    #         return self.updateObject(self, request, object, objectID)
+    #     else:
+    #         return HttpResponse("No Permission")
+
     @classmethod
     def putObject(self, request, objectID, privilige):
-        if checkSession(request, privilige):
-            object = jsonLoad(request)
-            return self.updateObject(self, request, object, objectID)
+        object = jsonLoad(request) 
+        if checkSession(request, privilige) and checkUserPermission(object, request)
+            return self.updateObject(request, object, objectID)
         else:
             return HttpResponse("No Permission")
 
@@ -194,14 +202,6 @@ class Users(ObjectAbstract):
         return HttpResponse(f"Add new User: {newUser.toDict()}")
 
     # Update User
-
-    @classmethod
-    def putObject(self, request, objectID, privilige):
-        object = jsonLoad(request) 
-        if checkSession(request, privilige) and checkUserPermission(object, request)
-            return self.updateObject(self, request, object, objectID)
-        else:
-            return HttpResponse("No Permission")
 
     def updateObject(request, userDict, objectID):
         putUser = User.objects.get(pk = objectID)
