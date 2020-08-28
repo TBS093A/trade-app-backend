@@ -9,28 +9,19 @@ class ObjectAbstract(models.Model):
 
     @classmethod
     def addObject(self, request, parentID, privilige):
-        if self.modelIsUser(self) or checkSession(request, privilige):
+        if checkSession(request, privilige):
             object = jsonLoad(request)
-            if self.modelIsUser(self):
-                object['privilige'] = 1
-                object['password'] = createPassHash(object['password'])
-            if self.checkUniqueValues(self, parentID, object):
-                 return self.saveObject(self, parentID, object)
+            if self.__checkUniqueValues(self, parentID, object):
+                 return self.__saveObject(self, parentID, object)
             else:
                 return HttpResponse("Object Is Already Exist")
         else:
             return HttpResponse("No Permission")
 
-    def modelIsUser(model):
-        return model == Users
-
-    def checkUniqueValues(model, parentID, objectDict):
-        objectsAll = model.allObjectsDict(model)
+    def __checkUniqueValues(model, parentID, objectDict):
+        objectsAll = model.__allObjectsDict(model)
         for x in objectsAll:
-            if model == Users:
-                if x['login'].upper() == objectDict['login'].upper():
-                    return False
-            elif model == Threads:
+            if model == Threads:
                 if x['name'].upper() == objectDict['name'].upper():
                     return False
             elif model == Ratings:
@@ -38,18 +29,7 @@ class ObjectAbstract(models.Model):
                     return False
         return True
 
-    @classmethod
-    def allObjectsDict(model):
-        objectAll = model.objects.all()
-        list = []
-        for x in objectAll:
-            list.append(x.toDict())
-        return list
-
-    def modelIsNotUser(model):
-        return model != Users
-
-    def saveObject(model, parentID, objectDict):
+    def __saveObject(model, parentID, objectDict):
         newObject = model()
         newObject.fromDict(objectDict)
         if model.modelHaveParent(model):
@@ -63,6 +43,17 @@ class ObjectAbstract(models.Model):
             newComment.save()
             return HttpResponse(f"{model.__name__}/{Comments}: Add new Objects: {newObject.toDict()} and {newComment.toDict()}")
         return HttpResponse(f"{model.__name__}: Add new Object: {newObject.toDict()}")
+
+    @classmethod
+    def __allObjectsDict(model):
+        objectAll = model.objects.all()
+        list = []
+        for x in objectAll:
+            list.append(x.toDict())
+        return list
+
+    def modelIsNotUser(model):
+        return model != Users
 
     def modelHaveParent(model):
         return model != Threads and model != Users
@@ -86,7 +77,7 @@ class ObjectAbstract(models.Model):
 
     @classmethod
     def getAllObjects(self, request, privilige):
-        objectsAll = self.allObjectsDict(self)
+        objectsAll = self.__allObjectsDict(self)
         return HttpResponse(json.dumps(objectsAll))
 
     @classmethod
@@ -127,19 +118,11 @@ class ObjectAbstract(models.Model):
             return HttpResponse("No Permission")
 
     @classmethod
-    def deleteObject(self, request, objectID, privilige):
-        if checkSession(request, privilige):
-            objectDel = self.objects.get(pk = objectID)
-            if checkUserPermission(objectDel.toDict(), request):
-                if self.modelIsUser(self):
-                    if checkPassHash(objectDict['password'], objectDel.password):
-                        pass
-                    else:
-                        return HttpResponse("Bad Password")
-                objectDel.delete()
-                return HttpResponse(f"{self.__name__}: {objectDel} has been deleted")
-            else:
-                return HttpResponse("No Permission")
+    def deleteObject(model, request, objectID, privilige):
+        objectDel = model.objects.get(pk = objectID)
+        if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
+            objectDel.delete()
+            return HttpResponse(f"{model.__name__}: {objectDel} has been deleted")
         else:
             return HttpResponse("No Permission")
 
@@ -170,37 +153,39 @@ class Users(ObjectAbstract):
     # Get One User
 
     def __getObjectNormal(objectID):
-        oneUser = User.objects.get(pk = objectID).toDict()
+        oneUser = Users.objects.get(pk = objectID).toDict()
         return HttpResponse(json.dumps(oneUser))
 
     # Create User
 
-    def addObject(self, request, parentID, privilige):
+    @classmethod
+    def addObject(request, privilige):
         newUser = jsonLoad(request)
         newUser['privilige'] = 1
         newUser['password'] = createPassHash(object['password'])
-        if self.__validateUnique(self, parentID, newUser):
-                return self.__saveObject(self, parentID, newUser)
+        if self.__validateUnique(newUser):
+                return self.__saveObject(newUser)
         else:
             return HttpResponse("User Is Already Exist")
 
-    def __validateUnique(self, parentID, userDict):
-        usersAll = self.allObjectsDict(User)
+    def __validateUnique(userDict):
+        usersAll = self.__allObjectsDict(User)
         for user in usersAll:
             if user['login'].upper() == userDict['login'].upper():
                 return False
         return True
 
-    def __saveObject(model, parentID, objectDict):
-        newUser = User()
+    def __saveObject(objectDict):
+        newUser = Users()
         newUser.fromDict(objectDict)
         newUser.save()
         return HttpResponse(f"Add new User: {newUser.toDict()}")
 
     # Update User
 
+    @classmethod
     def updateObject(request, userDict, objectID):
-        putUser = User.objects.get(pk = objectID)
+        putUser = Users.objects.get(pk = objectID)
         if checkPassHash(userDict['passwordOld'], putUser.password):
             if 'passwordNew' in userDict.keys():
                 userDict['password'] = createPassHash(objectDict['passwordNew'])
@@ -213,8 +198,8 @@ class Users(ObjectAbstract):
     # Delete User
 
     @classmethod
-    def deleteObject(self, request, objectID, privilige):
-        objectDel = self.objects.get(pk = objectID)
+    def deleteObject(request, objectID, privilige):
+        objectDel = Users.objects.get(pk = objectID)
         if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
             if checkPassHash(objectDict['password'], objectDel.password):
                 pass
@@ -243,6 +228,38 @@ class Threads(ObjectAbstract):
                 "moderator": self.user.login,
                 "moderator_avatar": self.user.avatar,
                 "moderator_privilige": self.user.privilige}
+
+    # Get One Thread
+
+    # Create Thread
+
+    @classmethod
+    def addObject(request, privilige):
+        object = jsonLoad(request)
+        if checkSession(request, privilige):
+            if self.__checkUniqueValues(object):
+                 return self.__saveObject(object)
+            else:
+                return HttpResponse("Object Is Already Exist")
+        else:
+            return HttpResponse("No Permission")
+
+    def __checkUniqueValues(objectDict):
+        objectsAll = Threads.__allObjectsDict(model)
+        for x in objectsAll:
+            if x['name'].upper() == objectDict['name'].upper():
+                return False
+        return True
+
+    def __saveObject(objectDict):
+        newObject = Threads()
+        newObject.fromDict(objectDict)
+        newObject.save()
+        return HttpResponse(f"Add new Thread: {newObject.toDict()}")
+
+    # Update Thread
+
+    # Delete Thread
 
 
 class Subjects(ObjectAbstract):
