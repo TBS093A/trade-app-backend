@@ -21,10 +21,7 @@ class ObjectAbstract(models.Model):
     def __checkUniqueValues(model, parentID, objectDict):
         objectsAll = model.__allObjectsDict(model)
         for x in objectsAll:
-            if model == Threads:
-                if x['name'].upper() == objectDict['name'].upper():
-                    return False
-            elif model == Ratings:
+            if model == Ratings:
                 if int(x['user_id']) == int(objectDict['user_id']) and int(x['comment_id']) == parentID:
                     return False
         return True
@@ -267,7 +264,7 @@ class Threads(ObjectAbstract):
         objectOld = Threads.objects.get(pk = objectID)
         objectOld.fromDict(objectDict)
         objectOld.save()
-        return HttpResponse(f"{model.__name__}: {objectOld.toDict()} has been updated")
+        return HttpResponse(f"Thread: {objectOld.toDict()} has been updated")
 
     # Delete Thread
 
@@ -309,6 +306,34 @@ class Subjects(ObjectAbstract):
                 "author_privilige": self.user.privilige,
                 "thread_id": self.thread.id,
                 "thread_name": self.thread.name}
+
+    # Get One Subject
+
+
+
+    # Create Subject
+
+    @classmethod
+    def addObject(request, threadID, privilige):
+        if checkSession(request, privilige):
+            object = jsonLoad(request)
+            return self.__saveObject(threadID, object)
+        else:
+            return HttpResponse("No Permission")
+
+    def __saveObject(threadID, objectDict):
+        newObject = Subjects()
+        newObject.fromDict(objectDict)
+
+        newComment = Comments(subject = newObject)
+        newComment.fromDict(objectDict['comment'])
+        newComment.save()
+        
+        return HttpResponse(f"Add new Subject: {newObject.toDict()} -> {newComment.toDict()}")
+
+    # Update Subject
+
+    # Delete Subject
 
 
 class Comments(ObjectAbstract):
