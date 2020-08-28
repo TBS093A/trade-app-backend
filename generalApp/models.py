@@ -4,6 +4,7 @@ from django.db.models import Avg
 from datetime import datetime
 from .utilities import *
 
+
 class ObjectAbstract(models.Model):
 
     @classmethod
@@ -37,6 +38,7 @@ class ObjectAbstract(models.Model):
                     return False
         return True
 
+    @classmethod
     def allObjectsDict(model):
         objectAll = model.objects.all()
         list = []
@@ -136,6 +138,7 @@ class ObjectAbstract(models.Model):
     class Meta:
         abstract = True
 
+
 class Users(ObjectAbstract):
     login       = models.CharField(max_length=30)
     password    = models.CharField(max_length=200)
@@ -156,6 +159,29 @@ class Users(ObjectAbstract):
                 "email": self.email,
                 "privilige": self.privilige}
 
+    def addObject(self, request, parentID, privilige):
+        newUser = jsonLoad(request)
+        newUser['privilige'] = 1
+        newUser['password'] = createPassHash(object['password'])
+        if self.validateUnique(self, parentID, newUser):
+                return self.saveObject(self, parentID, newUser)
+        else:
+            return HttpResponse("User Is Already Exist")
+
+    def __validateUnique(self, parentID, userDict):
+        usersAll = self.allObjectsDict(User)
+        for user in usersAll:
+            if user['login'].upper() == userDict['login'].upper():
+                return False
+        return True
+
+    def __saveObject(model, parentID, objectDict):
+        newUser = User()
+        newUser.fromDict(objectDict)
+        newUser.save()
+        return HttpResponse(f"Add new User: {newUser.toDict()}")
+
+
 class Threads(ObjectAbstract):
     name        = models.CharField(max_length=30)
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
@@ -173,6 +199,7 @@ class Threads(ObjectAbstract):
                 "moderator": self.user.login,
                 "moderator_avatar": self.user.avatar,
                 "moderator_privilige": self.user.privilige}
+
 
 class Subjects(ObjectAbstract):
     name        = models.CharField(max_length=30)
@@ -202,6 +229,7 @@ class Subjects(ObjectAbstract):
                 "author_privilige": self.user.privilige,
                 "thread_id": self.thread.id,
                 "thread_name": self.thread.name}
+
 
 class Comments(ObjectAbstract):
     text        = models.CharField(max_length=1000)
@@ -236,6 +264,7 @@ class Comments(ObjectAbstract):
                 "subject_id": self.subject.id,
                 "subject_name": self.subject.name}
 
+
 class Ratings(ObjectAbstract):
     value       = models.IntegerField()
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
@@ -263,6 +292,7 @@ class Ratings(ObjectAbstract):
                 "author_avatar": self.user.avatar,
                 "comment_id": self.comment.id,
                 "subject": self.comment.subject.name}
+
 
 class Transactions(ObjectAbstract):
     price               = models.FloatField(default=255)
@@ -296,6 +326,7 @@ class Transactions(ObjectAbstract):
                 "author": self.user.login,
                 "exchange_id": self.exchange.id}
 
+
 class Triggers(ObjectAbstract):
     course_values_for_trigger   = models.FloatField(default=255)
     date_of_trigger             = models.CharField(max_length=255)
@@ -326,6 +357,7 @@ class Triggers(ObjectAbstract):
 
     def setActualTime(self):
         self.date_of_trigger = str(datetime.now().strftime("%Y-%d-%m %H:%M"))
+
 
 class Notifications(ObjectAbstract):
     message     = models.CharField(max_length=255)
