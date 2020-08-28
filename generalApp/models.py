@@ -77,10 +77,10 @@ class ObjectAbstract(models.Model):
         return 'comment' in objectDict
 
     @classmethod
-    def getObject(self, request, objectID, privilige):
-        return self.getObjectNormal(self, objectID)
+    def getObject(self, request, objectID, privilige): # request, privilige is unnecessary
+        return self.__getObjectNormal(self, objectID)
 
-    def getObjectNormal(model, objectID):
+    def __getObjectNormal(model, objectID):
         object = model.objects.get(pk = objectID).toDict()
         return HttpResponse(json.dumps(object))
 
@@ -159,12 +159,24 @@ class Users(ObjectAbstract):
                 "email": self.email,
                 "privilige": self.privilige}
 
+    # Get One User
+
+    def __getObjectNormal(objectID):
+        oneUser = User.objects.get(pk = objectID).toDict()
+        return HttpResponse(json.dumps(oneUser))
+
+    # Get All Users
+
+
+
+    # Create User
+
     def addObject(self, request, parentID, privilige):
         newUser = jsonLoad(request)
         newUser['privilige'] = 1
         newUser['password'] = createPassHash(object['password'])
-        if self.validateUnique(self, parentID, newUser):
-                return self.saveObject(self, parentID, newUser)
+        if self.__validateUnique(self, parentID, newUser):
+                return self.__saveObject(self, parentID, newUser)
         else:
             return HttpResponse("User Is Already Exist")
 
@@ -180,6 +192,10 @@ class Users(ObjectAbstract):
         newUser.fromDict(objectDict)
         newUser.save()
         return HttpResponse(f"Add new User: {newUser.toDict()}")
+
+    # Update User
+
+    # Delete User    
 
 
 class Threads(ObjectAbstract):
