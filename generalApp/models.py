@@ -34,11 +34,6 @@ class ObjectAbstract(models.Model):
         if model.modelIsTrigger(model):
             newObject.setActualTime()
         newObject.save()
-        if model.modelIsSubject(model) and model.newCommentInNewSubject(objectDict):
-            newComment = Comments(subject = newObject)
-            newComment.fromDict(objectDict['comment'])
-            newComment.save()
-            return HttpResponse(f"{model.__name__}/{Comments}: Add new Objects: {newObject.toDict()} and {newComment.toDict()}")
         return HttpResponse(f"{model.__name__}: Add new Object: {newObject.toDict()}")
 
     @classmethod
@@ -324,6 +319,7 @@ class Subjects(ObjectAbstract):
     def __saveObject(threadID, objectDict):
         newObject = Subjects()
         newObject.fromDict(objectDict)
+        newObject.setParentID(threadID)
 
         newComment = Comments(subject = newObject)
         newComment.fromDict(objectDict['comment'])
@@ -368,6 +364,28 @@ class Comments(ObjectAbstract):
                 "author_privilige": self.user.privilige,
                 "subject_id": self.subject.id,
                 "subject_name": self.subject.name}
+
+    # Get One Comment
+    # Create Comment
+
+    @classmethod
+    def addObject(request, subjectID, privilige):
+        if checkSession(request, privilige):
+            object = jsonLoad(request)
+            return self.__saveObject(self, parentID, object)
+        else:
+            return HttpResponse("No Permission")
+
+    def __saveObject(subjectID, objectDict):
+        newObject = Comments()
+        newObject.fromDict(objectDict)
+        newObject.setParentID(subject)
+        newObject.save()
+        return HttpResponse(f"Add new Comment: {newObject.toDict()}")
+
+    # Update Comment
+
+    # Delete Comment
 
 
 class Ratings(ObjectAbstract):
