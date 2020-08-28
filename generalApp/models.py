@@ -195,6 +195,25 @@ class Users(ObjectAbstract):
 
     # Update User
 
+    @classmethod
+    def putObject(self, request, objectID, privilige):
+        object = jsonLoad(request) 
+        if checkSession(request, privilige) and checkUserPermission(object, request)
+            return self.updateObject(self, request, object, objectID)
+        else:
+            return HttpResponse("No Permission")
+
+    def updateObject(request, userDict, objectID):
+        putUser = User.objects.get(pk = objectID)
+        if checkPassHash(userDict['passwordOld'], putUser.password):
+            if 'passwordNew' in userDict.keys():
+                userDict['password'] = createPassHash(objectDict['passwordNew'])
+        else:
+            return HttpResponse('Bad Password')
+        putUser.fromDict(userDict)
+        putUser.save()
+        return HttpResponse(f"User: {putUser.toDict()} has been updated")
+
     # Delete User    
 
 
