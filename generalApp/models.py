@@ -173,10 +173,6 @@ class Users(ObjectAbstract):
         oneUser = User.objects.get(pk = objectID).toDict()
         return HttpResponse(json.dumps(oneUser))
 
-    # Get All Users
-
-
-
     # Create User
 
     def addObject(self, request, parentID, privilige):
@@ -214,7 +210,20 @@ class Users(ObjectAbstract):
         putUser.save()
         return HttpResponse(f"User: {putUser.toDict()} has been updated")
 
-    # Delete User    
+    # Delete User
+
+    @classmethod
+    def deleteObject(self, request, objectID, privilige):
+        objectDel = self.objects.get(pk = objectID)
+        if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
+            if checkPassHash(objectDict['password'], objectDel.password):
+                pass
+            else:
+                return HttpResponse("Bad Password")
+            objectDel.delete()
+            return HttpResponse(f"User: {objectDel.toDict()} has been deleted")
+        else:
+            return HttpResponse("No Permission")
 
 
 class Threads(ObjectAbstract):
