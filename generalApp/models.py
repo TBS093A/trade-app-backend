@@ -271,6 +271,15 @@ class Threads(ObjectAbstract):
 
     # Delete Thread
 
+    @classmethod
+    def deleteObject(request, objectID, privilige):
+        objectDel = Threads.objects.get(pk = objectID)
+        if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
+            objectDel.delete()
+            return HttpResponse(f"Thread: {objectDel} has been deleted")
+        else:
+            return HttpResponse("No Permission")
+
 
 class Subjects(ObjectAbstract):
     name        = models.CharField(max_length=30)
