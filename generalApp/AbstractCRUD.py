@@ -93,9 +93,9 @@ class AbstractCreate(AbstractUtilsCRUD):
     """
 
     @classmethod
-    def addObject(request, privilige):
+    def addObject(self, request, privilige):
         """
-        create object
+        create object without parent
         """
         object = jsonLoad(request)
         if checkSession(request, privilige):
@@ -121,6 +121,20 @@ class AbstractCreate(AbstractUtilsCRUD):
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
+    @classmethod
+    def addObject(self, request, parentID, privilige):
+        """
+        create object with parent
+        """
+        object = jsonLoad(request)
+        if checkSession(request, privilige):
+            if self._validateUnique(object):
+                 return self._saveObject(parentID, object)
+            else:
+                return HttpResponse("Object Is Already Exist")
+        else:
+            return HttpResponse("No Permission")
+
     def _saveObject(self, parentID, objectDict):
         """
         save object with parent & subject + comment & set trigger time
@@ -135,10 +149,10 @@ class AbstractCreate(AbstractUtilsCRUD):
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
-    def _createFirstComment(newSubject, objectDict):
+    def _createFirstComment(self, newSubject, objectDict):
         pass
 
-    def _setActualTimeTrigger():
+    def _setActualTimeTrigger(self):
         pass
 
     class Meta:

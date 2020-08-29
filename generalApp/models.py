@@ -220,56 +220,14 @@ class Threads(AbstractCRUD):
                 "moderator_avatar": self.user.avatar,
                 "moderator_privilige": self.user.privilige}
 
-    # Get One Thread
+    # Create Thread (validation)
 
-    def __getObjectNormal(objectID):
-        object = Threads.objects.get(pk = objectID).toDict()
-        return HttpResponse(json.dumps(object))
-
-    # Create Thread
-
-    @classmethod
-    def addObject(request, privilige):
-        object = jsonLoad(request)
-        if checkSession(request, privilige):
-            if self.__validateUnique(object):
-                 return self.__saveObject(object)
-            else:
-                return HttpResponse("Object Is Already Exist")
-        else:
-            return HttpResponse("No Permission")
-
-    def __validateUnique(objectDict):
+    def _validateUnique(self, objectDict):
         objectsAll = Threads.__allObjectsDict(model)
         for x in objectsAll:
             if x['name'].upper() == objectDict['name'].upper():
                 return False
         return True
-
-    def __saveObject(objectDict):
-        newObject = Threads()
-        newObject.fromDict(objectDict)
-        newObject.save()
-        return HttpResponse(f"Add new Thread: {newObject.toDict()}")
-
-    # Update Thread
-
-    def updateObject(request, objectDict, objectID):
-        objectOld = Threads.objects.get(pk = objectID)
-        objectOld.fromDict(objectDict)
-        objectOld.save()
-        return HttpResponse(f"Thread: {objectOld.toDict()} has been updated")
-
-    # Delete Thread
-
-    @classmethod
-    def deleteObject(request, objectID, privilige):
-        objectDel = Threads.objects.get(pk = objectID)
-        if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
-            objectDel.delete()
-            return HttpResponse(f"Thread: {objectDel} has been deleted")
-        else:
-            return HttpResponse("No Permission")
 
 
 class Subjects(AbstractCRUD):
