@@ -2,7 +2,7 @@ from django.db import models
 
 class AbstractUtilsCRUD():
     """
-    This class have a primary utils for CRUD functionality
+    This class have a primary utilities for CRUD functionality
     """
     
     @classmethod
@@ -32,11 +32,17 @@ class AbstractUtilsCRUD():
 
 
 class AbstractGet(AbstractUtilsCRUD):
+    """
+    This class have a abstract getOne / getAll / getByParent
+    """
 
     parent_id_field = ''
     
     @classmethod
     def getObject(self, objectID):
+        """
+        get one object
+        """
         return self.__getObjectNormal(self, objectID)
 
     def __getObjectNormal(self, objectID):
@@ -45,11 +51,17 @@ class AbstractGet(AbstractUtilsCRUD):
 
     @classmethod
     def getAllObjects(self):
+        """
+        get all objects
+        """
         objectsAll = self.allObjectsDict()
         return HttpResponse(json.dumps(objectsAll))
 
     @classmethod
     def getObjectsByParentID(self, parentID):
+        """
+        get objects by parent id
+        """
         return HttpResponse(self.__getAllByParentID(parentID))
     
     def __getAllByParentID(self, parentID):
