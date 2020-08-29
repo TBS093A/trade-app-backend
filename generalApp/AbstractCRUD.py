@@ -33,7 +33,7 @@ class AbstractUtilsCRUD():
 
 class AbstractGet(AbstractUtilsCRUD):
     """
-    This class have a abstract getOne / getAll / getByParent
+    This class have a abstract `getOne` / `getAll` / `getByParent`
     """
 
     parent_id_field = ''
@@ -65,58 +65,76 @@ class AbstractGet(AbstractUtilsCRUD):
         return HttpResponse(self.__getAllByParentID(parentID))
     
     def __getAllByParentID(self, parentID):
-        list = [ x.toDict() for x in self.objectFactory()
-            .__get.objects.filter(**{ parent_id_field: parentID })]
+        list = [ 
+            x.toDict() 
+            for x in self.objectFactory()
+            .__get.objects.filter(**{ parent_id_field: parentID })
+        ]
         return json.dumps(list)
 
 
 class AbstractCreate(AbstractUtilsCRUD):
+    """
+    This class have a abstract `create`
+    """
 
     @classmethod
     def addObject(request, privilige):
+        """
+        create object
+        """
         object = jsonLoad(request)
         if checkSession(request, privilige):
-            if self.__validateUnique(object):
-                 return self.__saveObject(object)
+            if self.validateUnique(object):
+                 return self.saveObject(object)
             else:
                 return HttpResponse("Object Is Already Exist")
         else:
             return HttpResponse("No Permission")
 
-    @classmethod
-    def __validateUnique(self, userDict):
+    def validateUnique(self, userDict):
+        """
+        use validate in override this method
+        """
         return True
 
-    @classmethod
-    def __saveObject(self, objectDict):
-        newObject = self.__getObject()
+    def saveObject(self, objectDict):
+        """
+        save object without parent
+        """
+        newObject = self.objectFactory()
         newObject.fromDict(objectDict)
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
-    @classmethod
-    def __saveObject(self, parentID, objectDict):
-        newObject = self.__getObject()
+    def saveObject(self, parentID, objectDict):
+        """
+        save object with parent & subject + comment & set trigger time
+        """
+        newObject = self.objectFactory()
         newObject.fromDict(objectDict)
 
-        self.__setParentID(parentID)
-        self.__createFirstComment(newObject, objectDict)
-        self.__setActualTimeTrigger()
+        self.setParentID(parentID)
+        self.createFirstComment(newObject, objectDict)
+        self.setActualTimeTrigger()
 
         newObject.save()
-        return HttpResponse(f"Add new Subject: {newObject.toDict()} -> {newComment.toDict()}")
+        return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
-    @classmethod
-    def __createFirstComment(newSubject, objectDict):
+    def createFirstComment(newSubject, objectDict):
         pass
 
-    @classmethod
-    def __setActualTimeTrigger():
+    def setActualTimeTrigger():
         pass
 
 
 class AbstractUpdate(AbstractUtilsCRUD):
-    pass
+
+    def updateObject(self, request, objectDict, objectID):
+        objectOld = self.objectFactory().objects.get(pk = objectID)
+        objectOld.fromDict(objectDict)
+        objectOld.save()
+        return HttpResponse(f"Update Object: {objectOld.toDict()}")
 
 
 class AbstractDelete(AbstractUtilsCRUD):

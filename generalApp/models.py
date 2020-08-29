@@ -184,8 +184,11 @@ class Users(ObjectAbstract):
         else:
             return HttpResponse('Bad Password')
         putUser.fromDict(userDict)
-        putUser.save()
-        return HttpResponse(f"User: {putUser.toDict()} has been updated")
+        if checkUserPermission(PutUser.toDict(), request):
+            putUser.save()
+            return HttpResponse(f"User: {putUser.toDict()} has been updated")
+        else
+            return HttpResponse("No Permission")
 
     # Delete User
 
