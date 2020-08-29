@@ -34,7 +34,7 @@ class AbstractUtilsCRUD():
 class AbstractGet(AbstractUtilsCRUD):
     
     @classmethod
-    def getObject(self, request, objectID, privilige): # request, privilige is unnecessary
+    def getObject(self, objectID):
         return self.__getObjectNormal(self, objectID)
 
     def __getObjectNormal(self, objectID):
@@ -42,15 +42,13 @@ class AbstractGet(AbstractUtilsCRUD):
         return HttpResponse(json.dumps(object))
 
     @classmethod
-    def getAllObjects(self, request, privilige):
+    def getAllObjects(self):
         objectsAll = self.allObjectsDict()
         return HttpResponse(json.dumps(objectsAll))
 
     @classmethod
-    def getObjectsByParentID(self, request, parentID, privilige):
-        if self.modelHaveParent(self):
-            return HttpResponse(self.getAllByParentID(parentID))
-        return HttpResponse("No Permission")
+    def getObjectsByParentID(self, request, parentID):
+        return HttpResponse(self.getAllByParentID(parentID))
     
     def __getAllByParentID(self, parentID):
         list = [ x.toDict() for x in self.objectFactory().__get.objects.filter(subject_id = parentID)]
