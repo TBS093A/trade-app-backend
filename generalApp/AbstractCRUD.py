@@ -29,6 +29,9 @@ class AbstractUtilsCRUD():
         for x in objectAll:
             list.append(x.toDict())
         return list
+    
+    class Meta:
+        abstract = True
 
 
 class AbstractGet(AbstractUtilsCRUD):
@@ -71,6 +74,9 @@ class AbstractGet(AbstractUtilsCRUD):
             .__get.objects.filter(**{ parent_id_field: parentID })
         ]
         return json.dumps(list)
+
+    class Meta:
+        abstract = True
 
 
 class AbstractCreate(AbstractUtilsCRUD):
@@ -127,6 +133,8 @@ class AbstractCreate(AbstractUtilsCRUD):
     def _setActualTimeTrigger():
         pass
 
+    class Meta:
+        abstract = True
 
 class AbstractUpdate(AbstractUtilsCRUD):
     """
@@ -147,6 +155,9 @@ class AbstractUpdate(AbstractUtilsCRUD):
         objectOld.save()
         return HttpResponse(f"Update Object: {objectOld.toDict()}")
 
+    class Meta:
+        abstract = True
+
 
 class AbstractDelete(AbstractUtilsCRUD):
     """
@@ -162,6 +173,9 @@ class AbstractDelete(AbstractUtilsCRUD):
         else:
             return HttpResponse("No Permission")
 
+    class Meta:
+        abstract = True
+
 
 class AbstractCRUD(
     models.Model,
@@ -170,4 +184,5 @@ class AbstractCRUD(
     AbstractUpdate,
     AbstractDelete,
 ):
-    pass
+    class Meta:
+        abstract = True
