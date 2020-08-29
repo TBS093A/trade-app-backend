@@ -207,11 +207,10 @@ class Threads(AbstractCRUD):
     name        = models.CharField(max_length=30)
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
 
+    parent_id_field = 'user_id'
+
     def __str__(self):
         return self.name
-
-    def fromDict(self, dict):
-        self.__dict__.update(dict)
 
     def toDict(self):
         return {"id": self.id,
@@ -278,19 +277,13 @@ class Subjects(AbstractCRUD):
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
     thread      = models.ForeignKey(Threads, on_delete = models.CASCADE)
 
+    parent_id_field = 'thread_id'
+
     def __str__(self):
         return f"{self.id} {self.name}"
 
     def setParentID(self, parentID):
         self.__dict__.update({ "thread_id": parentID })
-
-    @classmethod
-    def getAllByParentID(self, parentID):
-        list = [ x.toDict() for x in self.objects.filter(thread_id = parentID)]
-        return json.dumps(list)
-
-    def fromDict(self, dict):
-        self.__dict__.update(dict)
 
     def toDict(self):
         return {"id": self.id,
@@ -343,22 +336,16 @@ class Comments(AbstractCRUD):
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
     subject     = models.ForeignKey(Subjects, on_delete = models.CASCADE)
 
+    parent_id_field = 'subject_id'
+
     def __str__(self):
         return f"{self.user} -> {self.subject}"
 
     def setParentID(self, parentID):
         self.__dict__.update({ "subject_id": parentID })
 
-    @classmethod
-    def getAllByParentID(self, parentID):
-        list = [ x.toDict() for x in self.objects.filter(subject_id = parentID)]
-        return json.dumps(list)
-
     def commentSVG(self):
         return
-
-    def fromDict(self, dict):
-        self.__dict__.update(dict)
 
     def toDict(self):
         return {"id": self.id,
@@ -403,19 +390,13 @@ class Ratings(AbstractCRUD):
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
     comment     = models.ForeignKey(Comments, on_delete = models.CASCADE)
 
+    parent_id_field = 'comment_id'
+
     def __str__(self):
         return f"{self.user}, value: {self.value} -> comment in: {self.comment.subject}"
 
     def setParentID(self, parentID):
         self.__dict__.update({ "comment_id": parentID })
-
-    @classmethod
-    def getAllByParentID(self, parentID):
-        list = [ x.toDict() for x in self.objects.filter(comment_id = parentID)]
-        return json.dumps(list)
-
-    def fromDict(self, dict):
-        self.__dict__.update(dict)
 
     def toDict(self):
         return {"id": self.id,
@@ -444,19 +425,13 @@ class Transactions(AbstractCRUD):
     course_on_payment   = models.FloatField(default=255)
     user                = models.ForeignKey(Users, on_delete = models.CASCADE)
 
+    parent_id_field = 'user_id'
+
     def __str__(self):
         return f"{self.user.login}, cash: {self.price}, prognosis: {self.price_forecast}"
 
     def setParentID(self, parentID):
         self.__dict__.update({ "user_id": parentID })
-
-    @classmethod
-    def getAllByParentID(self, parentID):
-        list = [ x.toDict() for x in self.objects.filter(user_id = parentID)]
-        return json.dumps(list)
-
-    def fromDict(self, dict):
-        self.__dict__.update(dict)
 
     def toDict(self):
         return {"id": self.id,
@@ -475,19 +450,13 @@ class Triggers(AbstractCRUD):
     status                      = models.IntegerField(default=1)
     user                        = models.ForeignKey(Users, on_delete = models.CASCADE)
 
+    parent_id_field = 'user_id'
+
     def __str__(self):
         return f"{self.user.login}, trigger value: {self.course_values_for_trigger}, date: {self.date_of_trigger}"
 
     def setParentID(self, parentID):
         self.__dict__.update({ "user_id": parentID })
-
-    @classmethod
-    def getAllByParentID(self, parentID):
-        list = [ x.toDict() for x in self.objects.filter(user_id = parentID)]
-        return json.dumps(list)
-
-    def fromDict(self, dict):
-        self.__dict__.update(dict)
 
     def toDict(self):
         return {"id": self.id,
@@ -497,7 +466,7 @@ class Triggers(AbstractCRUD):
                 "user_id": self.user.id,
                 "author": self.user.login,}
 
-    def setActualTime(self):
+    def _setActualTimeTrigger(self)
         self.date_of_trigger = str(datetime.now().strftime("%Y-%d-%m %H:%M"))
 
 
@@ -505,18 +474,13 @@ class Notifications(ObjectAbstract):
     message     = models.CharField(max_length=255)
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
 
+    parent_id_field = 'user_id'
+
     def __str__(self):
         return f"Message: {self.message}, for User: {self.user.login}"
 
-    def setParentID(self, parentID):
+    def _setParentID(self, parentID):
         self.__dict__.update({ "user_id": parentID })
-
-    @classmethod
-    def getAllByParentID(self, parentID):
-        return json.dumps(list(self.objects.filter(user_id = parentID).values()))
-
-    def fromDict(self, dict):
-        self.__dict__.update(dict)
 
     def toDict(self):
         return {"id": self.id,

@@ -1,5 +1,13 @@
 from django.db import models
 
+class ValidationUtils():
+
+    def fromDict(self, dict):
+        self.__dict__.update(dict)
+
+    class Meta:
+        abstract = True
+
 class AbstractUtilsCRUD():
     """
     This class have a primary utilities for CRUD functionality
@@ -179,6 +187,7 @@ class AbstractDelete(AbstractUtilsCRUD):
 
 class AbstractCRUD(
     models.Model,
+    ValidationUtils,
     AbstractGet,
     AbstractCreate,
     AbstractUpdate,
