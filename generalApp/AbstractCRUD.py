@@ -32,6 +32,8 @@ class AbstractUtilsCRUD():
 
 
 class AbstractGet(AbstractUtilsCRUD):
+
+    parent_id_field = ''
     
     @classmethod
     def getObject(self, objectID):
@@ -47,11 +49,12 @@ class AbstractGet(AbstractUtilsCRUD):
         return HttpResponse(json.dumps(objectsAll))
 
     @classmethod
-    def getObjectsByParentID(self, request, parentID):
-        return HttpResponse(self.getAllByParentID(parentID))
+    def getObjectsByParentID(self, parentID):
+        return HttpResponse(self.__getAllByParentID(parentID))
     
     def __getAllByParentID(self, parentID):
-        list = [ x.toDict() for x in self.objectFactory().__get.objects.filter(subject_id = parentID)]
+        list = [ x.toDict() for x in self.objectFactory()
+            .__get.objects.filter(**{ parent_id_field: parentID })]
         return json.dumps(list)
 
 
