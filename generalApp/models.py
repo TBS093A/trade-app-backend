@@ -133,15 +133,17 @@ class Users(AbstractCRUD):
     def __str__(self):
         return f"{self.id} {self.login}"
 
-    def fromDict(self, dict):
-        self.__dict__.update(dict)
-
     def toDict(self):
         return {"id": self.id,
                 "login": self.login,
                 "avatar": self.avatar,
                 "email": self.email,
                 "privilige": self.privilige}
+
+    # Object Factory for abstract
+
+    def objectFactory():
+        return Users()
 
     # Get One User
 
@@ -220,6 +222,11 @@ class Threads(AbstractCRUD):
                 "moderator_avatar": self.user.avatar,
                 "moderator_privilige": self.user.privilige}
 
+    # Object Factory for abstract
+
+    def objectFactory():
+        return Threads()
+
     # Create Thread (validation)
 
     def _validateUnique(self, objectDict):
@@ -253,33 +260,14 @@ class Subjects(AbstractCRUD):
                 "thread_id": self.thread.id,
                 "thread_name": self.thread.name}
     
+    # Object Factory for abstract
+
     def objectFactory():
         return Subjects()
 
-    # Get One Subject
+    # Create Subject ( create new subject + comment ones )
 
-
-
-    # Create Subject
-
-    @classmethod
-    def addObject(request, threadID, privilige):
-        if checkSession(request, privilige):
-            object = jsonLoad(request)
-            return self.__saveObject(threadID, object)
-        else:
-            return HttpResponse("No Permission")
-
-    def __saveObject(self, threadID, objectDict):
-        newObject = self.getObject()
-        newObject.fromDict(objectDict)
-        newObject.setParentID(threadID)
-
-        self.__createFirstComment(newObject, objectDict)
-        
-        return HttpResponse(f"Add new Subject: {newObject.toDict()} -> {newComment.toDict()}")
-
-    def __createFirstComment(newSubject, objectDict):
+    def _createFirstComment(newSubject, objectDict):
         newComment = Comments(subject = newSubject)
         newComment.fromDict(objectDict['comment'])
         newComment.save()
@@ -316,31 +304,10 @@ class Comments(AbstractCRUD):
                 "subject_id": self.subject.id,
                 "subject_name": self.subject.name}
     
+    # Object Factory for abstract
+
     def objectFactory():
         return Comments()
-
-    # Get One Comment
-    
-    # Create Comment
-
-    @classmethod
-    def addObject(request, subjectID, privilige):
-        if checkSession(request, privilige):
-            object = jsonLoad(request)
-            return self.__saveObject(self, parentID, object)
-        else:
-            return HttpResponse("No Permission")
-
-    def __saveObject(subjectID, objectDict):
-        newObject = self.getObject()
-        newObject.fromDict(objectDict)
-        newObject.setParentID(subject)
-        newObject.save()
-        return HttpResponse(f"Add new Comment: {newObject.toDict()}")
-
-    # Update Comment
-
-    # Delete Comment
 
 
 class Ratings(AbstractCRUD):
@@ -364,6 +331,8 @@ class Ratings(AbstractCRUD):
                 "author_avatar": self.user.avatar,
                 "comment_id": self.comment.id,
                 "subject": self.comment.subject.name}
+
+    # Create Ratings (validate)
 
     @classmethod
     def __validateUnique(model, parentID, objectDict):
