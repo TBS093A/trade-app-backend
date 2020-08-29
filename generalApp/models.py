@@ -123,7 +123,7 @@ class ObjectAbstract(models.Model):
         abstract = True
 
 
-class Users(ObjectAbstract):
+class Users(AbstractCRUD):
     login       = models.CharField(max_length=30)
     password    = models.CharField(max_length=200)
     email       = models.EmailField(max_length=50)
@@ -176,8 +176,7 @@ class Users(ObjectAbstract):
 
     # Update User
 
-    @classmethod
-    def updateObject(request, userDict, objectID):
+    def updateObject(self, userDict, objectID):
         putUser = Users.objects.get(pk = objectID)
         if checkPassHash(userDict['passwordOld'], putUser.password):
             if 'passwordNew' in userDict.keys():
@@ -185,11 +184,8 @@ class Users(ObjectAbstract):
         else:
             return HttpResponse('Bad Password')
         putUser.fromDict(userDict)
-        if checkUserPermission(PutUser.toDict(), request):
-            putUser.save()
-            return HttpResponse(f"User: {putUser.toDict()} has been updated")
-        else
-            return HttpResponse("No Permission")
+        putUser.save()
+        return HttpResponse(f"User: {putUser.toDict()} has been updated")
 
     # Delete User
 
@@ -207,7 +203,7 @@ class Users(ObjectAbstract):
             return HttpResponse("No Permission")
 
 
-class Threads(ObjectAbstract):
+class Threads(AbstractCRUD):
     name        = models.CharField(max_length=30)
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
 
@@ -277,7 +273,7 @@ class Threads(ObjectAbstract):
             return HttpResponse("No Permission")
 
 
-class Subjects(ObjectAbstract):
+class Subjects(AbstractCRUD):
     name        = models.CharField(max_length=30)
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
     thread      = models.ForeignKey(Threads, on_delete = models.CASCADE)
@@ -342,7 +338,7 @@ class Subjects(ObjectAbstract):
     # Delete Subject
 
 
-class Comments(ObjectAbstract):
+class Comments(AbstractCRUD):
     text        = models.CharField(max_length=1000)
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
     subject     = models.ForeignKey(Subjects, on_delete = models.CASCADE)
@@ -402,7 +398,7 @@ class Comments(ObjectAbstract):
     # Delete Comment
 
 
-class Ratings(ObjectAbstract):
+class Ratings(AbstractCRUD):
     value       = models.IntegerField()
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
     comment     = models.ForeignKey(Comments, on_delete = models.CASCADE)
@@ -440,7 +436,7 @@ class Ratings(ObjectAbstract):
         return True
 
 
-class Transactions(ObjectAbstract):
+class Transactions(AbstractCRUD):
     price               = models.FloatField(default=255)
     price_forecast      = models.FloatField(default=255)
     currency            = models.CharField(max_length=255)
@@ -473,7 +469,7 @@ class Transactions(ObjectAbstract):
                 "exchange_id": self.exchange.id}
 
 
-class Triggers(ObjectAbstract):
+class Triggers(AbstractCRUD):
     course_values_for_trigger   = models.FloatField(default=255)
     date_of_trigger             = models.CharField(max_length=255)
     status                      = models.IntegerField(default=1)
