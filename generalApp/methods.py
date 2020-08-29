@@ -89,19 +89,19 @@ def logoutUser(request):
     return deleteSession(request)
 
 def registerUser(request):
-    return Users.addObject(request, None, None)
+    return Users.addObject(request)
 
 def addThread(request):
-    return Threads.addObject(request, None, 2)
+    return Threads.addObject(request, 2)
 
 def addSubject(request, threadID):
-    return Subjects.addObject(request, threadID, 1)
+    return Subjects.addObjectWithParent(request, threadID, 1)
 
 def addComment(request, subjectID):
-    return Comments.addObject(request, subjectID, 1)
+    return Comments.addObjectWithParent(request, subjectID, 1)
 
 def addRating(request, commentID):
-    return Ratings.addObject(request, commentID, 1)
+    return Ratings.addObjectWithParent(request, commentID, 1)
 
 # Forum GET Methods
 
@@ -109,7 +109,7 @@ def getUser(request, id):
     return Users.getObject(request, id, 2)
 
 def getUsersAll(request):
-    return Users.getAllObjects(request, 2)
+    return Users.getAllObjects()
 
 def getThreadsAll(request):
     return Threads.getAllObjects(request, 1)

@@ -1,4 +1,7 @@
 from django.db import models
+from django.http import HttpResponse
+from datetime import datetime
+from .utilities import *
 
 class ValidationUtils():
 
@@ -116,13 +119,13 @@ class AbstractCreate(AbstractUtilsCRUD):
         """
         save object without parent
         """
-        newObject = self._objectFactory()
+        newObject = self._objectFactory()()
         newObject.fromDict(objectDict)
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
     @classmethod
-    def addObject(self, request, parentID, privilige):
+    def addObjectWithParent(self, request, parentID, privilige):
         """
         create object with parent
         """
@@ -139,7 +142,7 @@ class AbstractCreate(AbstractUtilsCRUD):
         """
         save object with parent & subject + comment & set trigger time
         """
-        newObject = self._objectFactory()
+        newObject = self._objectFactory()()
         newObject.fromDict(objectDict)
 
         self.__setParentID(parentID)
@@ -166,7 +169,7 @@ class AbstractUpdate(AbstractUtilsCRUD):
     @classmethod
     def putObject(self, request, objectID, privilige):
         object = jsonLoad(request) 
-        if checkSession(request, privilige) and checkUserPermission(object, request)
+        if checkSession(request, privilige) and checkUserPermission(object, request):
             return self._updateObject(object, objectID)
         else:
             return HttpResponse("No Permission")

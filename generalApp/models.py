@@ -90,7 +90,7 @@ class ObjectAbstract(models.Model):
     @classmethod
     def putObject(self, request, objectID, privilige):
         object = jsonLoad(request) 
-        if checkSession(request, privilige) and checkUserPermission(object, request)
+        if checkSession(request, privilige) and checkUserPermission(object, request):
             return self.updateObject(request, object, objectID)
         else:
             return HttpResponse("No Permission")
@@ -142,35 +142,29 @@ class Users(AbstractCRUD):
 
     # Object Factory for abstract
 
-    def objectFactory():
-        return Users()
-
-    # Get One User
-
-    def __getObjectNormal(objectID):
-        oneUser = Users.objects.get(pk = objectID).toDict()
-        return HttpResponse(json.dumps(oneUser))
+    def _objectFactory():
+        return Users
 
     # Create User
 
     @classmethod
-    def addObject(request, privilige):
+    def addObject(self, request):
         newUser = jsonLoad(request)
         newUser['privilige'] = 1
-        newUser['password'] = createPassHash(object['password'])
-        if self.__validateUnique(newUser):
-                return self.__saveObject(newUser)
+        newUser['password'] = createPassHash(newUser['password'])
+        if self._validateUnique(newUser):
+                return self._saveObject(newUser)
         else:
             return HttpResponse("User Is Already Exist")
 
-    def __validateUnique(userDict):
-        usersAll = self.__allObjectsDict(User)
+    def _validateUnique(self, userDict):
+        usersAll = self._allObjectsDict()
         for user in usersAll:
             if user['login'].upper() == userDict['login'].upper():
                 return False
         return True
 
-    def __saveObject(objectDict):
+    def _saveObject(self, objectDict):
         newUser = Users()
         newUser.fromDict(objectDict)
         newUser.save()
@@ -178,11 +172,11 @@ class Users(AbstractCRUD):
 
     # Update User
 
-    def updateObject(self, userDict, objectID):
+    def _updateObject(self, userDict, objectID):
         putUser = Users.objects.get(pk = objectID)
         if checkPassHash(userDict['passwordOld'], putUser.password):
             if 'passwordNew' in userDict.keys():
-                userDict['password'] = createPassHash(objectDict['passwordNew'])
+                userDict['password'] = createPassHash(userDict['passwordNew'])
         else:
             return HttpResponse('Bad Password')
         putUser.fromDict(userDict)
@@ -192,10 +186,11 @@ class Users(AbstractCRUD):
     # Delete User
 
     @classmethod
-    def deleteObject(request, objectID, privilige):
+    def deleteObject(self, request, objectID, privilige):
+        checkPass = jsonLoad(request)
         objectDel = Users.objects.get(pk = objectID)
         if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
-            if checkPassHash(objectDict['password'], objectDel.password):
+            if checkPassHash(checkPass['password'], objectDel.password):
                 pass
             else:
                 return HttpResponse("Bad Password")
@@ -225,12 +220,12 @@ class Threads(AbstractCRUD):
     # Object Factory for abstract
 
     def objectFactory():
-        return Threads()
+        return Threads
 
     # Create Thread (validation)
 
     def _validateUnique(self, objectDict):
-        objectsAll = Threads.__allObjectsDict(model)
+        objectsAll = Threads._allObjectsDict()
         for x in objectsAll:
             if x['name'].upper() == objectDict['name'].upper():
                 return False
@@ -263,11 +258,11 @@ class Subjects(AbstractCRUD):
     # Object Factory for abstract
 
     def objectFactory():
-        return Subjects()
+        return Subjects
 
     # Create Subject ( create new subject + comment ones )
 
-    def _createFirstComment(newSubject, objectDict):
+    def _createFirstComment(self,newSubject, objectDict):
         newComment = Comments(subject = newSubject)
         newComment.fromDict(objectDict['comment'])
         newComment.save()
@@ -307,7 +302,7 @@ class Comments(AbstractCRUD):
     # Object Factory for abstract
 
     def objectFactory():
-        return Comments()
+        return Comments
 
 
 class Ratings(AbstractCRUD):
@@ -332,11 +327,16 @@ class Ratings(AbstractCRUD):
                 "comment_id": self.comment.id,
                 "subject": self.comment.subject.name}
 
+    # Object Factory for abstract
+
+    def objectFactory():
+        return Ratings
+
     # Create Ratings (validate)
 
     @classmethod
-    def __validateUnique(model, parentID, objectDict):
-        objectsAll = model.__allObjectsDict(model)
+    def _validateUnique(self, parentID, objectDict):
+        objectsAll = Ratings._allObjectsDict(model)
         for x in objectsAll:
             if model == Ratings:
                 if int(x['user_id']) == int(objectDict['user_id']) and int(x['comment_id']) == parentID:
@@ -370,6 +370,11 @@ class Transactions(AbstractCRUD):
                 "author": self.user.login,
                 "exchange_id": self.exchange.id}
 
+    # Object Factory for abstract
+
+    def objectFactory():
+        return Transactions
+
 
 class Triggers(AbstractCRUD):
     course_values_for_trigger   = models.FloatField(default=255)
@@ -392,8 +397,15 @@ class Triggers(AbstractCRUD):
                 "status": self.status,
                 "user_id": self.user.id,
                 "author": self.user.login,}
+    
+    # Object Factory for abstract
 
-    def _setActualTimeTrigger(self)
+    def objectFactory():
+        return Triggers
+
+    # Create Trigger (set actual time)
+
+    def _setActualTimeTrigger(self):
         self.date_of_trigger = str(datetime.now().strftime("%Y-%d-%m %H:%M"))
 
 
@@ -413,3 +425,8 @@ class Notifications(ObjectAbstract):
         return {"id": self.id,
                 "message": self.message,
                 "user_id": self.user.id}
+
+    # Object Factory for abstract
+
+    def objectFactory():
+        return Notifications
