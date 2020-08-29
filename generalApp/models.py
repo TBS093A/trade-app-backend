@@ -233,14 +233,14 @@ class Threads(ObjectAbstract):
     def addObject(request, privilige):
         object = jsonLoad(request)
         if checkSession(request, privilige):
-            if self.__checkUniqueValues(object):
+            if self.__validateUnique(object):
                  return self.__saveObject(object)
             else:
                 return HttpResponse("Object Is Already Exist")
         else:
             return HttpResponse("No Permission")
 
-    def __checkUniqueValues(objectDict):
+    def __validateUnique(objectDict):
         objectsAll = Threads.__allObjectsDict(model)
         for x in objectsAll:
             if x['name'].upper() == objectDict['name'].upper():
@@ -301,6 +301,9 @@ class Subjects(ObjectAbstract):
                 "author_privilige": self.user.privilige,
                 "thread_id": self.thread.id,
                 "thread_name": self.thread.name}
+    
+    def objectFactory():
+        return Subjects()
 
     # Get One Subject
 
@@ -316,16 +319,19 @@ class Subjects(ObjectAbstract):
         else:
             return HttpResponse("No Permission")
 
-    def __saveObject(threadID, objectDict):
-        newObject = Subjects()
+    def __saveObject(self, threadID, objectDict):
+        newObject = self.getObject()
         newObject.fromDict(objectDict)
         newObject.setParentID(threadID)
 
-        newComment = Comments(subject = newObject)
-        newComment.fromDict(objectDict['comment'])
-        newComment.save()
+        self.__createFirstComment(newObject, objectDict)
         
         return HttpResponse(f"Add new Subject: {newObject.toDict()} -> {newComment.toDict()}")
+
+    def __createFirstComment(newSubject, objectDict):
+        newComment = Comments(subject = newSubject)
+        newComment.fromDict(objectDict['comment'])
+        newComment.save()
 
     # Update Subject
 
@@ -364,8 +370,12 @@ class Comments(ObjectAbstract):
                 "author_privilige": self.user.privilige,
                 "subject_id": self.subject.id,
                 "subject_name": self.subject.name}
+    
+    def objectFactory():
+        return Comments()
 
     # Get One Comment
+    
     # Create Comment
 
     @classmethod
@@ -377,7 +387,7 @@ class Comments(ObjectAbstract):
             return HttpResponse("No Permission")
 
     def __saveObject(subjectID, objectDict):
-        newObject = Comments()
+        newObject = self.getObject()
         newObject.fromDict(objectDict)
         newObject.setParentID(subject)
         newObject.save()
@@ -415,6 +425,15 @@ class Ratings(ObjectAbstract):
                 "author_avatar": self.user.avatar,
                 "comment_id": self.comment.id,
                 "subject": self.comment.subject.name}
+
+    @classmethod
+    def __validateUnique(model, parentID, objectDict):
+        objectsAll = model.__allObjectsDict(model)
+        for x in objectsAll:
+            if model == Ratings:
+                if int(x['user_id']) == int(objectDict['user_id']) and int(x['comment_id']) == parentID:
+                    return False
+        return True
 
 
 class Transactions(ObjectAbstract):
