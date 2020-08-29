@@ -130,7 +130,8 @@ class AbstractCreate(AbstractUtilsCRUD):
 
 class AbstractUpdate(AbstractUtilsCRUD):
 
-    def updateObject(self, request, objectDict, objectID):
+    @classmethod
+    def updateObject(self, objectDict, objectID):
         objectOld = self.objectFactory().objects.get(pk = objectID)
         objectOld.fromDict(objectDict)
         objectOld.save()
@@ -138,7 +139,15 @@ class AbstractUpdate(AbstractUtilsCRUD):
 
 
 class AbstractDelete(AbstractUtilsCRUD):
-    pass
+    
+    @classmethod
+    def deleteObject(request, objectID, privilige):
+        objectDel = Threads.objects.get(pk = objectID)
+        if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
+            objectDel.delete()
+            return HttpResponse(f"Thread: {objectDel} has been deleted")
+        else:
+            return HttpResponse("No Permission")
 
 
 class AbstractCRUD(
