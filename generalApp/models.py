@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.db.models import Avg
 from datetime import datetime
 from .utilities import *
+from .AbstractCRUD import AbstractCRUD
 
 
 class ObjectAbstract(models.Model):
