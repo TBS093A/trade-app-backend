@@ -129,23 +129,32 @@ class AbstractCreate(AbstractUtilsCRUD):
 
 
 class AbstractUpdate(AbstractUtilsCRUD):
+    """
+    This class have a abstract `update`
+    """
 
     @classmethod
     def updateObject(self, objectDict, objectID):
         objectOld = self.objectFactory().objects.get(pk = objectID)
         objectOld.fromDict(objectDict)
-        objectOld.save()
-        return HttpResponse(f"Update Object: {objectOld.toDict()}")
+        if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
+            objectOld.save()
+            return HttpResponse(f"Update Object: {objectOld.toDict()}")
+        else
+            return HttpResponse("No Permission")
 
 
 class AbstractDelete(AbstractUtilsCRUD):
-    
+    """
+    This class have a abstract `delete`
+    """
+
     @classmethod
-    def deleteObject(request, objectID, privilige):
-        objectDel = Threads.objects.get(pk = objectID)
+    def deleteObject(self, request, objectID, privilige):
+        objectDel = self.objectFactory().objects.get(pk = objectID)
         if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
             objectDel.delete()
-            return HttpResponse(f"Thread: {objectDel} has been deleted")
+            return HttpResponse(f"Delete Object: {objectDel}")
         else:
             return HttpResponse("No Permission")
 
