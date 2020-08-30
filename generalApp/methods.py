@@ -106,22 +106,22 @@ def addRating(request, commentID):
 # Forum GET Methods
 
 def getUser(request, id):
-    return Users.getObject(request, id, 2)
+    return Users.getObject(id)
 
 def getUsersAll(request):
     return Users.getAllObjects()
 
 def getThreadsAll(request):
-    return Threads.getAllObjects(request, 1)
+    return Threads.getAllObjects()
 
 def getThreadSubjects(request, threadID):
-    return Subjects.getObjectsByParentID(request, threadID, 1)
+    return Subjects.getObjectsByParentID(threadID)
 
 def getSubjectComments(request, subjectID):
-    return Comments.getObjectsByParentID(request, subjectID, 1)
+    return Comments.getObjectsByParentID(subjectID)
 
 def getCommentRatings(request, commentID):
-    return Ratings.getObjectsByParentID(request, commentID, 1)
+    return Ratings.getObjectsByParentID(commentID)
 
 # Forum PUT Methods
 
