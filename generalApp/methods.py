@@ -33,25 +33,25 @@ def getExchangeGraph(request, time):
     return ExchangeVO.getGraphView(request, time)
 
 def getTrigger(request, id):
-    return Triggers.getObject(request, id, 1)
+    return Triggers.getObject(id)
 
 def getTransaction(request, id):
-    return Transactions.getObject(request, id, 1)
+    return Transactions.getObject(id)
 
 def getUserTriggers(request, userID):
-    return Triggers.getObjectsByParentID(request, userID, 1)
+    return Triggers.getObjectsByParentID(userID)
 
 def getUserTransactions(request, userID):
-    return Transactions.getObjectByParentID(request, userID, 1)
+    return Transactions.getObjectsByParentID(userID)
 
 def getTriggersAll(request):
-    return Triggers.getAllObjects(request, 2)
+    return Triggers.getAllObjects()
 
 def getTransactionsAll(request):
-    return Transactions.getAllObjects(request, 2)
+    return Transactions.getAllObjects()
 
 def getUserNotifications(request, userID):
-    return Notifications.getObjectsByParentID(request, userID, 1)
+    return Notifications.getObjectsByParentID(userID)
 
 # Exchange PUT Methods
 

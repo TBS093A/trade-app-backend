@@ -267,10 +267,6 @@ class Subjects(AbstractCRUD):
         newComment.fromDict(objectDict['comment'])
         newComment.save()
 
-    # Update Subject
-
-    # Delete Subject
-
 
 class Comments(AbstractCRUD):
     text        = models.CharField(max_length=1000)
@@ -409,7 +405,7 @@ class Triggers(AbstractCRUD):
         self.date_of_trigger = str(datetime.now().strftime("%Y-%d-%m %H:%M"))
 
 
-class Notifications(ObjectAbstract):
+class Notifications(AbstractCRUD):
     message     = models.CharField(max_length=255)
     user        = models.ForeignKey(Users, on_delete = models.CASCADE)
 
