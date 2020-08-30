@@ -5,6 +5,7 @@ from .utilities import *
 
 class ValidationUtils():
 
+    @classmethod
     def fromDict(self, dict):
         self.__dict__.update(dict)
 
@@ -78,6 +79,7 @@ class AbstractGet(AbstractUtilsCRUD):
         """
         return HttpResponse(self.__getAllByParentID(parentID))
     
+    @classmethod
     def __getAllByParentID(self, parentID):
         list = [ 
             x.toDict() 
@@ -109,12 +111,14 @@ class AbstractCreate(AbstractUtilsCRUD):
         else:
             return HttpResponse("No Permission")
 
+    @classmethod
     def _validateUnique(self, userDict):
         """
         use validate in override this method
         """
         return True
-
+    
+    @classmethod
     def _saveObject(self, objectDict):
         """
         save object without parent
@@ -132,13 +136,14 @@ class AbstractCreate(AbstractUtilsCRUD):
         object = jsonLoad(request)
         if checkSession(request, privilige):
             if self._validateUnique(object):
-                 return self._saveObject(parentID, object)
+                 return self._saveObjectWithParent(parentID, object)
             else:
                 return HttpResponse("Object Is Already Exist")
         else:
             return HttpResponse("No Permission")
-
-    def _saveObject(self, parentID, objectDict):
+    
+    @classmethod
+    def _saveObjectWithParent(self, parentID, objectDict):
         """
         save object with parent & subject + comment & set trigger time
         """
@@ -152,14 +157,17 @@ class AbstractCreate(AbstractUtilsCRUD):
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
+    @classmethod
     def _createFirstComment(self, newSubject, objectDict):
         pass
-
+    
+    @classmethod
     def _setActualTimeTrigger(self):
         pass
-
+    
     class Meta:
         abstract = True
+
 
 class AbstractUpdate(AbstractUtilsCRUD):
     """
@@ -173,7 +181,8 @@ class AbstractUpdate(AbstractUtilsCRUD):
             return self._updateObject(object, objectID)
         else:
             return HttpResponse("No Permission")
-
+    
+    @classmethod
     def _updateObject(self, objectDict, objectID):
         objectOld = self._objectFactory().objects.get(pk = objectID)
         objectOld.fromDict(objectDict)

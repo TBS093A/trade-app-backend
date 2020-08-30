@@ -18,11 +18,11 @@ def checkTriggerNotification():
 
 # Exchange POST Methods
 
-def addTrigger(request, userID):
-    return Triggers.addObject(request, userID, 1)
+def addTrigger(request):
+    return Triggers.addObject(request, 1)
 
-def addTransaction(request, userID):
-    return Transactions.addObject(request, userID, 1)
+def addTransaction(request):
+    return Transactions.addObject(request, 1)
 
 def Prognosis(request, time, price):
     return ExchangeVO.createActualPrognosis(request, time, price, 1)

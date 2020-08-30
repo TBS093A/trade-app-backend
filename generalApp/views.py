@@ -122,7 +122,7 @@ def transactions(request, userID):
     if request.method == 'GET':
         return getUserTransactions(request, userID)
     elif request.method == 'POST':
-        return addTransaction(request, userID)
+        return addTransaction(request)
     else:
         return HttpResponse('Bad Request Method')
 
@@ -146,7 +146,7 @@ def triggers(request, userID):
     if request.method == 'GET':
         return getUserTriggers(request, userID)
     elif request.method == 'POST':
-        return addTrigger(request, userID)
+        return addTrigger(request)
     else:
         return HttpResponse('Bad Request Method')
 

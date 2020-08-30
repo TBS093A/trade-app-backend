@@ -219,7 +219,7 @@ class Threads(AbstractCRUD):
 
     # Object Factory for abstract
 
-    def objectFactory():
+    def _objectFactory():
         return Threads
 
     # Create Thread (validation)
@@ -257,7 +257,7 @@ class Subjects(AbstractCRUD):
     
     # Object Factory for abstract
 
-    def objectFactory():
+    def _objectFactory():
         return Subjects
 
     # Create Subject ( create new subject + comment ones )
@@ -297,7 +297,7 @@ class Comments(AbstractCRUD):
     
     # Object Factory for abstract
 
-    def objectFactory():
+    def _objectFactory():
         return Comments
 
 
@@ -325,7 +325,7 @@ class Ratings(AbstractCRUD):
 
     # Object Factory for abstract
 
-    def objectFactory():
+    def _objectFactory():
         return Ratings
 
     # Create Ratings (validate)
@@ -368,7 +368,7 @@ class Transactions(AbstractCRUD):
 
     # Object Factory for abstract
 
-    def objectFactory():
+    def _objectFactory():
         return Transactions
 
 
@@ -396,7 +396,7 @@ class Triggers(AbstractCRUD):
     
     # Object Factory for abstract
 
-    def objectFactory():
+    def _objectFactory():
         return Triggers
 
     # Create Trigger (set actual time)
@@ -424,5 +424,5 @@ class Notifications(AbstractCRUD):
 
     # Object Factory for abstract
 
-    def objectFactory():
+    def _objectFactory():
         return Notifications
