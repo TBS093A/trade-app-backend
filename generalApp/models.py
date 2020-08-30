@@ -400,9 +400,10 @@ class Triggers(AbstractCRUD):
         return Triggers
 
     # Create Trigger (set actual time)
-
-    def _setActualTimeTrigger(self):
-        self.date_of_trigger = str(datetime.now().strftime("%Y-%d-%m %H:%M"))
+    
+    @classmethod
+    def _setActualTimeTrigger(self, trigger):
+        trigger.date_of_trigger = str(datetime.now().strftime('%Y-%d-%m %H:%M'))
 
 
 class Notifications(AbstractCRUD):

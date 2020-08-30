@@ -125,8 +125,13 @@ class AbstractCreate(AbstractUtilsCRUD):
         """
         del objectDict['token']
         newObject = self._objectFactory().objects.create(**objectDict)
+        self._setActualTimeTrigger(newObject)
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
+
+    @classmethod
+    def _setActualTimeTrigger(self, trigger):
+        pass
 
     @classmethod
     def addObjectWithParent(self, request, parentID, privilige):
@@ -150,19 +155,14 @@ class AbstractCreate(AbstractUtilsCRUD):
         del objectDict['token']
         newObject = self._objectFactory().objects.create(**objectDict)
 
-        self.__setParentID(parentID)
+        self._setParentID(parentID)
         self._createFirstComment(newObject, objectDict)
-        self._setActualTimeTrigger()
 
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
     @classmethod
     def _createFirstComment(self, newSubject, objectDict):
-        pass
-    
-    @classmethod
-    def _setActualTimeTrigger(self):
         pass
     
     class Meta:
