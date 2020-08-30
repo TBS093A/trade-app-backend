@@ -84,7 +84,7 @@ class AbstractGet(AbstractUtilsCRUD):
         list = [ 
             x.toDict() 
             for x in self._objectFactory()
-            .__get.objects.filter(**{ parent_id_field: parentID })
+            .objects.filter(**{ self._objectFactory().parent_id_field: parentID })
         ]
         return json.dumps(list)
 
@@ -123,8 +123,8 @@ class AbstractCreate(AbstractUtilsCRUD):
         """
         save object without parent
         """
-        newObject = self._objectFactory()()
-        newObject.fromDict(objectDict)
+        del objectDict['token']
+        newObject = self._objectFactory().objects.create(**objectDict)
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
@@ -147,8 +147,8 @@ class AbstractCreate(AbstractUtilsCRUD):
         """
         save object with parent & subject + comment & set trigger time
         """
-        newObject = self._objectFactory()()
-        newObject.fromDict(objectDict)
+        del objectDict['token']
+        newObject = self._objectFactory().objects.create(**objectDict)
 
         self.__setParentID(parentID)
         self._createFirstComment(newObject, objectDict)
