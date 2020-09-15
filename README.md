@@ -53,7 +53,7 @@ class AbstractUtilsCRUD():
         abstract = True
 ```
 
-It's a utils for CRUD classes using global like this:
+It're a utils for CRUD classes using global like this:
 
 ```python
 class AbstractCreate(AbstractUtilsCRUD):
