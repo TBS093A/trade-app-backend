@@ -90,6 +90,56 @@ class AbstractUtilsCRUD():
 It're a utils for CRUD classes using global like this:
 
 ```python
+
+class AbstractGet(AbstractUtilsCRUD):
+    """
+    This class have a abstract `getOne` / `getAll` / `getByParent`
+    """
+
+    parent_id_field = ''
+    
+    @classmethod
+    def getObject(self, objectID):
+        """
+        get one object
+        """
+        return self.__getObjectNormal(self, objectID)
+
+    def __getObjectNormal(self, objectID):
+        object = self._objectFactory().objects.get(pk = objectID).toDict()
+        return HttpResponse(json.dumps(object))
+
+    @classmethod
+    def getAllObjects(self):
+        """
+        get all objects
+        """
+        objectsAll = self._allObjectsDict()
+        return HttpResponse(json.dumps(objectsAll))
+
+    @classmethod
+    def getObjectsByParentID(self, parentID):
+        """
+        get objects by parent id
+        """
+        return HttpResponse(self.__getAllByParentID(parentID))
+    
+    @classmethod
+    def __getAllByParentID(self, parentID):
+        list = [ 
+            x.toDict() 
+            for x in self._objectFactory()
+            .objects.filter(**{ self._objectFactory().parent_id_field: parentID })
+        ]
+        return json.dumps(list)
+
+    class Meta:
+        abstract = True
+        
+```
+
+```python
+
 class AbstractCreate(AbstractUtilsCRUD):
     """
     This class have a abstract `create`
@@ -104,12 +154,14 @@ class AbstractCreate(AbstractUtilsCRUD):
         """
         del objectDict['token']
         newObject = self._objectFactory().objects.create(**objectDict)
-        self._setActualTimeTrigger(newObject)
+        
+        [...]
+        
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
 ```
-Other classes looks similar to AbstractCreate (let's see AbstractCRUD for more details).
+Other classes looks similar to AbstractCreate / AbstractGet (let's see AbstractCRUD for more details).
 
 Generaly - I'm gonna refactor this app with design patterns like:
 - chain of responsibility (thanks tree structure classes, possible go this way: endpoint request -> verify user (security functionality) -> app functionality)
