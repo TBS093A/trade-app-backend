@@ -3,7 +3,7 @@ Python / Django / Websocket / Docker / Own REST / Own App Security
 
 ## Basic Information
 
-Application for analyze a BTC stock exchange & community. Thanks this app you can subscribe BTC exchange and you can contact quickly with other app users (websocket chat & rest forum). Functionality have:
+Application for analyze a BTC stock exchange & community. Thanks this app you can subscribe BTC exchange and you can contact quickly with other app users (websocket chat & rest forum). Functionality has:
 - chart (candles)
 - triggers (it's create a notification when stock exchange get a your value)
 - basic prognosis
