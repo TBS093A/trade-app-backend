@@ -13,6 +13,38 @@ Trade App has also security func (like create/verify tokens (hashed information 
 
 ### Project Structure
 
+```bash
+.
+├── chat
+│   ├── admin.py
+│   ├── consumers.py
+│   ├── models.py
+│   ├── routing.py
+│   ├── urls.py
+│   └── views.py
+├── generalApp
+│   ├── AbstractCRUD.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── exchangeVO.py
+│   ├── methods.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   ├── utilities.py
+│   └── views.py
+├── manage.py
+├── migrate.sh
+├── packages.sh
+├── run.sh
+└── TradeApp
+    ├── routing.py
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+
+```
+
 ### UML
 
 ## Comments
