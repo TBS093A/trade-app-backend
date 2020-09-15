@@ -44,18 +44,18 @@ Trade App has also security func (like create/verify tokens (hashed information 
     └── wsgi.py
 
 ```
-### Usefull files
+### Useful files
 
 Shell / Bash Files
 
 - ./packages.sh
-This file have every python virtual environment requirements for application run
+(every python virtual environment requirements for application run)
 
 - ./migrate.sh
-This file migrate every models with database in app and generate UML
+(migrate every models with database in app and generate UML)
 
 - ./run.sh
-This file running application
+(run application)
 
 ## UML
 
