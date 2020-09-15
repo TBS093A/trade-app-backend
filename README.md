@@ -9,7 +9,7 @@ Application for analyze a BTC stock exchange & community. Thanks this app you ca
 - basic prognosis
 - notifications
 
-Trade App has also security func (like create/verify tokens (hashed information about user))
+Trade App has also security func (like create/verify tokens (hashed information about user and session))
 
 ### Project Structure
 
