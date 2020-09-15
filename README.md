@@ -1,7 +1,7 @@
 # Trade App
 Python / Django / Websocket / Docker / Own REST / Own App Security
 
-## Basic Information
+## Basic Informations
 
 Application for analyze a BTC stock exchange & community. Thanks this app you can subscribe BTC exchange and you can contact quickly with other app users (websocket chat & rest forum). Functionality has:
 - chart (candles)
@@ -44,8 +44,21 @@ Trade App has also security func (like create/verify tokens (hashed information 
     └── wsgi.py
 
 ```
+### Usefull files
 
-### UML
+Shell / Bash Files
+../packages.sh
+This file have every python virtual environment requirements for application run
+
+../migrate.sh
+This file migrate every models with database in app and generate UML
+
+../run.sh
+This file running application
+
+## UML
+
+### Class diagram by apps
 
 ![uml_by_apps](https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/12abb353-ab91-4433-96d3-b5d9c5847254/de56rda-8c6c1a01-e952-4957-9890-c19519eeeae5.png/v1/fill/w_1280,h_864,strp/class_diagram_by_apps_by_00x097_de56rda-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3siaGVpZ2h0IjoiPD04NjQiLCJwYXRoIjoiXC9mXC8xMmFiYjM1My1hYjkxLTQ0MzMtOTZkMy1iNWQ5YzU4NDcyNTRcL2RlNTZyZGEtOGM2YzFhMDEtZTk1Mi00OTU3LTk4OTAtYzE5NTE5ZWVlYWU1LnBuZyIsIndpZHRoIjoiPD0xMjgwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.2Jm_XxFhksN8mAtdUS9n_F0shiK8VttfN21rhm1-tbk)
 
@@ -139,6 +152,8 @@ class AbstractGet(AbstractUtilsCRUD):
         abstract = True
         
 ```
+
+And other example
 
 ```python
 
