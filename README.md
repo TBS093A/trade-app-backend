@@ -47,13 +47,14 @@ Trade App has also security func (like create/verify tokens (hashed information 
 ### Usefull files
 
 Shell / Bash Files
-../packages.sh
+
+- ./packages.sh
 This file have every python virtual environment requirements for application run
 
-../migrate.sh
+- ./migrate.sh
 This file migrate every models with database in app and generate UML
 
-../run.sh
+- ./run.sh
 This file running application
 
 ## UML
