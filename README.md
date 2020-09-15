@@ -47,6 +47,8 @@ Trade App has also security func (like create/verify tokens (hashed information 
 
 ### UML
 
+![uml_by_apps](https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/12abb353-ab91-4433-96d3-b5d9c5847254/de56rda-8c6c1a01-e952-4957-9890-c19519eeeae5.png/v1/fill/w_1280,h_864,strp/class_diagram_by_apps_by_00x097_de56rda-fullview.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3siaGVpZ2h0IjoiPD04NjQiLCJwYXRoIjoiXC9mXC8xMmFiYjM1My1hYjkxLTQ0MzMtOTZkMy1iNWQ5YzU4NDcyNTRcL2RlNTZyZGEtOGM2YzFhMDEtZTk1Mi00OTU3LTk4OTAtYzE5NTE5ZWVlYWU1LnBuZyIsIndpZHRoIjoiPD0xMjgwIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.2Jm_XxFhksN8mAtdUS9n_F0shiK8VttfN21rhm1-tbk)
+
 ## Comments
 
 Application need a refactor endpoints, general functionality and security. General structure -> "generalApp" will be smashed a smaller apps/directores. Now, CRUD has been refactorized full, you can see:
