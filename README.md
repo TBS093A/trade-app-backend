@@ -95,26 +95,7 @@ class AbstractCreate(AbstractUtilsCRUD):
     This class have a abstract `create`
     """
 
-    @classmethod
-    def addObject(self, request, privilige):
-        """
-        create object without parent
-        """
-        object = jsonLoad(request)
-        if checkSession(request, privilige):
-            if self._validateUnique(object):
-                 return self._saveObject(object)
-            else:
-                return HttpResponse("Object Is Already Exist")
-        else:
-            return HttpResponse("No Permission")
-
-    @classmethod
-    def _validateUnique(self, userDict):
-        """
-        use validate in override this method
-        """
-        return True
+    [...]
     
     @classmethod
     def _saveObject(self, objectDict):
@@ -127,44 +108,6 @@ class AbstractCreate(AbstractUtilsCRUD):
         newObject.save()
         return HttpResponse(f"Add new Object: {newObject.toDict()}")
 
-    @classmethod
-    def _setActualTimeTrigger(self, trigger):
-        pass
-
-    @classmethod
-    def addObjectWithParent(self, request, parentID, privilige):
-        """
-        create object with parent
-        """
-        object = jsonLoad(request)
-        if checkSession(request, privilige):
-            if self._validateUnique(object):
-                 return self._saveObjectWithParent(parentID, object)
-            else:
-                return HttpResponse("Object Is Already Exist")
-        else:
-            return HttpResponse("No Permission")
-    
-    @classmethod
-    def _saveObjectWithParent(self, parentID, objectDict):
-        """
-        save object with parent & subject + comment & set trigger time
-        """
-        del objectDict['token']
-        newObject = self._objectFactory().objects.create(**objectDict)
-
-        self._setParentID(parentID)
-        self._createFirstComment(newObject, objectDict)
-
-        newObject.save()
-        return HttpResponse(f"Add new Object: {newObject.toDict()}")
-
-    @classmethod
-    def _createFirstComment(self, newSubject, objectDict):
-        pass
-    
-    class Meta:
-        abstract = True
 ```
 Other classes looks similar to AbstractCreate (let's see AbstractCRUD for more details).
 
