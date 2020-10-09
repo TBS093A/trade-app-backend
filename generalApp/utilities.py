@@ -22,6 +22,8 @@ def createToken(userDict):
 
 def checkSession(request, privilige):
     token = tryGetTokenFromRequest(request)
+    print( token )
+    print( tokens )
     for currentToken in tokens:
         if token == currentToken:
             if decodeToken(currentToken)['payload']['privilige'] >= privilige:
@@ -70,6 +72,8 @@ def checkUserPermission(modelDict, request):
 
     token = tryGetTokenFromRequest(request)
     if modelIsNotUser(modelDict):
+        print( UserIsAdmin(token) )
+        print( UserIsModer(token) )
         if UserIsAdmin(token):
             return True
         elif UserIsModer(token):

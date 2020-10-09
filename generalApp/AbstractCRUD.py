@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from datetime import datetime
 from .utilities import *
 
+
 class ValidationUtils():
 
     @classmethod
@@ -11,6 +12,7 @@ class ValidationUtils():
 
     class Meta:
         abstract = True
+
 
 class AbstractUtilsCRUD():
     """
@@ -177,7 +179,7 @@ class AbstractUpdate(AbstractUtilsCRUD):
     @classmethod
     def putObject(self, request, objectID, privilige):
         object = jsonLoad(request) 
-        if checkSession(request, privilige) and checkUserPermission(object, request):
+        if checkSession(request, privilige) or checkUserPermission(object, request):
             return self._updateObject(object, objectID)
         else:
             return HttpResponse("No Permission")
@@ -201,7 +203,7 @@ class AbstractDelete(AbstractUtilsCRUD):
     @classmethod
     def deleteObject(self, request, objectID, privilige):
         objectDel = self._objectFactory().objects.get(pk = objectID)
-        if checkSession(request, privilige) and checkUserPermission(objectDel.toDict(), request):
+        if checkSession(request, privilige) or checkUserPermission(objectDel.toDict(), request):
             objectDel.delete()
             return HttpResponse(f"Delete Object: {objectDel}")
         else:
@@ -213,11 +215,15 @@ class AbstractDelete(AbstractUtilsCRUD):
 
 class AbstractCRUD(
     models.Model,
-    ValidationUtils,
     AbstractGet,
     AbstractCreate,
     AbstractUpdate,
     AbstractDelete,
 ):
+
+    @classmethod
+    def fromDict(self, dict):
+        self.__dict__.update(dict)
+
     class Meta:
         abstract = True
