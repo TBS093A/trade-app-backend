@@ -5,8 +5,10 @@ pip install channels_redis
 pip install requests
 pip install pyjwt
 
-pip install django_extensions
 
 # for runing generate UML:
+
 # pip install pydotplus
+# pip install django_extensions
+
 # apt-get install graphviz
