@@ -1,7 +1,8 @@
 FROM python:3.8
+FROM redis
 
 RUN python -m venv venv
-RUN surce venv/bin/activate
+RUN source venv/bin/activate
 
 CMD ["mkdir", "application"]
 WORKDIR /application
