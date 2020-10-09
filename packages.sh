@@ -6,7 +6,7 @@ pip install requests
 pip install pyjwt
 
 pip install django_extensions
-pip install pydotplus
 
 # for runing generate UML:
+# pip install pydotplus
 # apt-get install graphviz
