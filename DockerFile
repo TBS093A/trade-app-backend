@@ -1,0 +1,15 @@
+FROM python:3.8
+
+RUN pip install --upgrade pip setuptools \
+	&& ./packages.sh
+
+ADD chat /app/chat
+ADD generalApp /app/generalApp
+ADD TradeApp /app/TradeApp
+ADD manage.py /app/manage.py
+
+WORKDIR /app
+
+RUN ./migrate.sh
+
+CMD ["./run.sh"]
