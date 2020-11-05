@@ -1,9 +1,9 @@
-pip install django
-pip install django-cors-headers
+pip install django==3.1.2
+pip install django-cors-headers==3.5.0
 
-pip install channels_redis
-pip install requests
-pip install pyjwt
+pip install channels_redis==3.1.0
+pip install requests==2.24.0
+pip install pyjwt==1.7.1
 
 
 # for runing generate UML:
