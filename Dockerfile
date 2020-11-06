@@ -1,14 +1,17 @@
 FROM python:3.8
-FROM redis
 
-RUN python -m venv venv
-RUN source venv/bin/activate
+RUN pip install --upgrade pip setuptools
 
-CMD ["mkdir", "application"]
-WORKDIR /application
-
-RUN git clone git@github.com:TBS093A/trade-app-backend.git
+ADD chat ./chat
+ADD generalApp ./generalApp
+ADD TradeApp ./TradeApp
+ADD manage.py ./manage.py
+ADD packages.sh ./packages.sh
+ADD migrate.sh ./migrate.sh
+ADD run.sh ./run.sh
 
 RUN ./packages.sh
 RUN ./migrate.sh
-RUN ./run.sh
+
+# CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "TradeApp.wsgi"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:9090"]
